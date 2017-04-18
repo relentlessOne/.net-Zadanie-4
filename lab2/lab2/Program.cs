@@ -62,8 +62,7 @@ namespace lab4
             nonBlockAdd.Start();
 
 
-            Console.WriteLine("Press enter to close...");
-            Console.ReadLine();
+     
         }
     }
 }
