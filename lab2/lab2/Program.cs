@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace lab4
@@ -24,48 +26,41 @@ namespace lab4
             Console.WriteLine("---------------");
 
 
-            Console.WriteLine("");
+            Thread blockAdd = new Thread(() => {
 
-            Console.WriteLine("Add(5): ");
-            Console.WriteLine("---------------");
-            arr.add(5);
-            arr.display();
-            Console.WriteLine("---------------");
+                
+                while (true)
+                {
+                    Thread.Sleep(500);
+                    Stopwatch sw = new Stopwatch();
+                    sw.Start();
+                    arr.CreateAddBlock(2);
+                    sw.Stop();
+                    Console.WriteLine("Blocking thread successfully added an element ");
+                    Console.WriteLine( "Blocking thread has been waiting for " + sw.ElapsedMilliseconds + "ms");
+                }
+            });
 
-            Console.WriteLine("");
-
-            Console.WriteLine("arr[2] (index out of bounds): ");
-            Console.WriteLine("---------------");
-            int test = arr[2];
-            Console.WriteLine("---------------");
-
-            Console.WriteLine("");
-
-            Console.WriteLine("Add(7): ");
-            Console.WriteLine("---------------");
-            arr.add(7);
-            arr.display();
-            Console.WriteLine("---------------");
-
-            Console.WriteLine("");
-
-
-            Console.WriteLine("arr[2] = 6: ");
-            Console.WriteLine("---------------");
-            arr[2] = 6;
-            arr.display();
-            Console.WriteLine("---------------");
-
-            Console.WriteLine("");
-
-            Console.WriteLine("arr[9] = 16: ");
-            Console.WriteLine("---------------");
-            arr[9] = 16;
-            arr.display();
-            Console.WriteLine("---------------");
+            Thread nonBlockAdd = new Thread(() =>
+            {
+                while (true)
+                {
+                    Thread.Sleep(500);
+                    if (arr.CreateAddNonBlock(3))
+                    {
+                        Console.WriteLine("Non-blocking thread successfully added an element ");
+                    }
+                    else
+                    {
+                        Console.WriteLine("Non-blocking thread cannot add an element ");
+                    }
+                }
+            });
 
 
-        
+            blockAdd.Start();
+            nonBlockAdd.Start();
+
 
             Console.WriteLine("Press enter to close...");
             Console.ReadLine();

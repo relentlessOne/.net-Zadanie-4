@@ -2,18 +2,22 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace lab4
 {
 
-    class DynamicArrayArgs : EventArgs
+class DynamicArrayArgs : EventArgs
     {
         public int size { get; set; }
     }
 
     class DynamicArray
     {
+
+        private static readonly Object obj = new Object();
+
 
         public event EventHandler<DynamicArrayArgs> SizeChanged;
 
@@ -115,6 +119,42 @@ namespace lab4
             OnSizeChanged();
         }
 
+        public void  CreateAddBlock(int what)
+        {
+                lock (obj)
+                {
+                Thread.Sleep(2000);
+                Array.Resize(ref arr, arr.Length * 2);
+                    size++;
+                    arr[size - 1] = what;
+                    OnSizeChanged();
+                    Console.WriteLine("done block - "+what);
+                }
+        }
+
+
+        public bool CreateAddNonBlock(int what)
+        {
+            if (!Monitor.TryEnter(obj))
+            {
+                return false;
+            }
+            else
+            {
+                Thread.Sleep(2000);
+                Array.Resize(ref arr, arr.Length * 2);
+                size++;
+                arr[size - 1] = what;
+                OnSizeChanged();
+                Console.WriteLine("done nonBlock - "+what);
+
+                Monitor.Exit(obj);
+                return true;
+            }
+
+   
+     
+        }
 
         public DynamicArray(int size)
         {
